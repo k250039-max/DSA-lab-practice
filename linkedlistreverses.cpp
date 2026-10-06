@@ -39,3 +39,36 @@ void reverse()
         else head=prev;
        if(after==NULL) tail = before ;
     }
+void reverseInGroups(int k)
+{
+    if(head == NULL || head == tail || k <= 1) return;
+
+    int n = 0;
+    for(Node* t = head; t != NULL; t = t->next) n++;
+
+    int groups = n / k;                 // number of full groups
+    if(groups == 0) return;             // k larger than the list
+
+    Node* prevEnd = NULL;               // last node of the previous group
+    Node* curr = head;
+
+    for(int g = 0; g < groups; g++)
+    {
+        Node* groupFirst = curr;        // becomes this group's last node
+        Node* prev = NULL;
+        for(int i = 0; i < k; i++)      // reverse k nodes
+        {
+            Node* nxt = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = nxt;
+        }
+        // prev = new first of the group, curr = node after the group
+        groupFirst->next = curr;        // connect to the next group (or leftover)
+        if(prevEnd == NULL) head = prev;
+        else prevEnd->next = prev;
+        prevEnd = groupFirst;
+    }
+
+    if(n % k == 0) tail = prevEnd;      // no leftover: last group's end is the tail
+}
